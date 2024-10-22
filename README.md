@@ -51,7 +51,103 @@ The architectural diagram should illustrate the following components:
 
   *  Once the stream is created, you should see a success message.
 
-**Step 3: Provisioning a Redshift Cluster**
+**Step 3: Create IAM Role for Lambda**
+
+**1. Create IAM Role:**
+
+ * Go to the IAM console.
+
+ * Create a new role with the following permissions:
+
+   * AmazonS3ReadOnlyAccess
+
+   * LambdaKinesisRole
+
+   * CloudWatchLogsFullAccess
+
+**Step 4: Create Lambda Function**
+
+**1. Create the Lambda Function:**
+
+ * Go to the Lambda console.
+
+   * Create a new function:
+
+   * Runtime: Python 3.x
+
+ * Execution role: Use the IAM role created in Step 3.
+
+**2. Add S3 Trigger:**
+
+Configure the function to be triggered when a new object is created in your S3 bucket.
+
+**3. Update Lambda Function Code:**
+
+ * Use the following code for your Lambda function:
+
+       import json
+       import csv
+       import boto3
+       import uuid
+       
+       def lambda_handler(event, context):
+           region = 'us-east-1'
+           record_list = []
+       	
+           try:
+               s3=boto3.client('s3')
+               dynamodb=boto3.client('dynamodb',region_name=region)
+               bucket=event['Records'][0]['s3']['bucket']['name']
+               key=event['Records'][0]['s3']['object']['key']
+       		
+               print('Bucket:', bucket,'Key:', key)
+               csv_file=s3.get_object(Bucket=bucket,Key=key)
+               record_list=csv_file['Body'].read().decode('utf-8').split('\n')
+               csv_reader=csv.reader(record_list,delimiter=',',quotechar='"')
+               firstrecord=True
+       		
+               for row in csv_reader:
+                  if(firstrecord):
+                      firstrecord=False
+                      continue
+                  id=row[0]
+                  case_number=row[1]
+                  date=row[2]
+                  block=row[3]
+                  iucr_code=row[4]
+                  location_desc=row[5]
+                  arrest=row[6]
+                  domestic=row[7]
+                  beat_num=row[8]
+                  district_code=row[9]
+                  ward_no=row[10]
+                  community_code=row[11]
+                  fbi_code=row[12]
+                  x_coordinate=row[13]
+                  y_coordinate=row[14]
+                  year=row[15]
+                  date_of_update=row[16]
+                  latitude=row[17]
+                  longitude=row[18]
+                  location=row[19]
+       
+       			  
+                  print('id:',id)
+       			  
+                  data={'id':{'N':str(id)},'case_number':{'S':str(case_number)},'date':{'S':str(date)},'block':{'S':str(block)},'iucr_code':{'S':str(iucr_code)},'location_desc':{'S':str(location_desc)},'arrest':{'S':str(arrest)},'domestic':{'S':str(domestic)},'beat_num':{'N':str(beat_num)},'district_code':{'N':str(district_code)},'ward_no':{'N':str(ward_no)},'community_code':{'N':str(community_code)},'fbi_code':{'S':str(fbi_code)},'x_coordinate':{'S':str(x_coordinate)},'y_coordinate':{'S':str(y_coordinate)},'year':{'N':str(year)},'date_of_update':{'S':str(date_of_update)},'latitude':{'S':str(latitude)},'longitude':{'S':str(longitude)},'location':{'S':str(location)}})
+              
+           response=kinesis.put_record(StreamName='Criminaldatastream' ,Data=json.dumps(data),PartitionKey=str(uuid.uuid4()))
+       
+           except Exception as e:
+       	       print(str(e))
+       
+           return {
+               'statusCode': 200,
+               'body': json.dumps('csv to Kinesis Data Stream success')
+           }
+
+
+**Step 5: Provisioning a Redshift Cluster**
 
 **1.  Navigate to Redshift:**
 
@@ -83,7 +179,7 @@ The architectural diagram should illustrate the following components:
 
   *  Associate the IAM role that has permissions for Kinesis and other required services.
 
-**Step 4: Connect to Redshift Query Editor**
+**Step 6: Connect to Redshift Query Editor**
 
 **1.  Open Query Editor:**
 
@@ -93,7 +189,7 @@ The architectural diagram should illustrate the following components:
 
   *  Use the credentials you saved earlier to connect to the default database.
 
-**Step 5: Create External Schema**
+**Step 7: Create External Schema**
 
   *  Run the following SQL command to create an external schema for Kinesis:
 
@@ -101,7 +197,7 @@ The architectural diagram should illustrate the following components:
     FROM KINESIS
     IAM_ROLE 'arn:aws:iam::YOUR_ACCOUNT_ID:role/YOUR_ROLE_NAME';
 
-**Step 6: Create Materialized View**
+**Step 8: Create Materialized View**
 
   *  Create a materialized view to capture data from the Kinesis stream:
 
@@ -129,7 +225,7 @@ The architectural diagram should illustrate the following components:
         json_extract_path_text(from_varbyte(kinesis_data, 'utf-8'),'location')::VARCHAR as Location
     FROM Realtime_CrimeData_Schema."crimedatastream";
 
-**Step 7: Refresh the Materialized View**
+**Step 9: Refresh the Materialized View**
 
   *  Run the following command to refresh the materialized view:
 
