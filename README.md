@@ -1,12 +1,15 @@
 # Processing-Streaming-Data-from-AWS-Kinesis-Data-Stream-to-AWS-Redshift
 This project demonstrates how to ingest real-time crime data into Amazon Redshift from an AWS Kinesis Data Stream, enabling analytics on streaming data.
 
-**Prerequisites**
+## Prerequisites
 
   *  AWS account with access to Kinesis, Redshift, IAM, and S3 services.
   *  Basic understanding of AWS services and SQL.
 
 **Architectural Diagram**
+
+![Streaming-Data-Ingestion-Kinesis-Redshift](https://github.com/user-attachments/assets/cb342798-8d29-4130-ad4c-d5fca4ae1d3d)
+
 The architectural diagram should illustrate the following components:
 
   *  **S3 Bucket:** The starting point where the CSV file is stored.
@@ -15,9 +18,7 @@ The architectural diagram should illustrate the following components:
   *  **Amazon Redshift:** Data warehouse where data is stored and queried.
   *  **IAM Role:** Provides necessary permissions for Kinesis and Redshift.
 
-![Streaming-Data-Ingestion-Kinesis-Redshift](https://github.com/user-attachments/assets/cb342798-8d29-4130-ad4c-d5fca4ae1d3d)
-
-**Step-by-Step Instructions**
+### Step-by-Step Instructions
 
 **Step 1: Set Up S3 Bucket**
 
@@ -61,7 +62,7 @@ The architectural diagram should illustrate the following components:
 
    * AmazonS3ReadOnlyAccess
 
-   * LambdaKinesisRole
+   * AWSLambdaKinesisExecutionRole
 
    * CloudWatchLogsFullAccess
 
