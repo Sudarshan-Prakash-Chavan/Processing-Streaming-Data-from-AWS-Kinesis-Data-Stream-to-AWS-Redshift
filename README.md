@@ -6,9 +6,9 @@ This project demonstrates how to ingest real-time crime data into Amazon Redshif
   *  AWS account with access to Kinesis, Redshift, IAM, and S3 services.
   *  Basic understanding of AWS services and SQL.
 
-**Architectural Diagram**
+### Architectural Diagram
 
-![Streaming-Data-Ingestion-Kinesis-Redshift](https://github.com/user-attachments/assets/cb342798-8d29-4130-ad4c-d5fca4ae1d3d)
+![Processing-Streaming-Data-from-AWS-Kinesis-Data-Stream-to-AWS-Redshift](https://github.com/user-attachments/assets/19fb90cc-8e73-4afe-9ee8-4a4d14b3473a)
 
 The architectural diagram should illustrate the following components:
 
