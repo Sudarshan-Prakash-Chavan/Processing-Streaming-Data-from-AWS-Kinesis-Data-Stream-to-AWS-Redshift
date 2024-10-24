@@ -10,7 +10,7 @@ This project demonstrates how to ingest real-time crime data into Amazon Redshif
 
 ![Processing-Streaming-Data-from-AWS-Kinesis-Data-Stream-to-AWS-Redshift](https://github.com/user-attachments/assets/19fb90cc-8e73-4afe-9ee8-4a4d14b3473a)
 
-The architectural diagram should illustrate the following components:
+The architectural diagram illustrate the following components:
 
   *  **S3 Bucket:** The starting point where the CSV file is stored.
   *  **Kinesis Data Stream:** Captures streaming data.
